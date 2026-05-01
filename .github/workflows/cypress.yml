@@ -1,0 +1,61 @@
+name: Cypress Cucumber Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  cypress-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Start QA Practice API
+        run: |
+          docker run -d --rm --name qa-practice-api -p 8887:8081 rvancea/qa-practice-api:latest
+          sleep 10
+          docker ps
+
+      - name: Run Cypress tests and generate report
+        run: yarn test:report
+        continue-on-error: true
+
+      - name: Upload Cucumber HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cucumber-html-report
+          path: cypress/reports/cucumber-html
+          if-no-files-found: warn
+
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          if-no-files-found: ignore

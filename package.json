@@ -1,0 +1,36 @@
+{
+  "name": "cy_cucum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "report": "node generate-report.js",
+    "test:report": "yarn cy:run; yarn report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^24.0.1",
+    "cucumber-html-reporter": "^7.2.0",
+    "cypress": "^15.14.2",
+    "multiple-cucumber-html-reporter": "^3.10.0"
+  },
+  "dependencies": {
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "esbuild": "^0.28.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/e2e/features/**/*.js",
+      "cypress/e2e/features/common/**/*.js"
+    ],
+    "json": {
+      "enabled": true,
+      "output": "cypress/reports/cucumber-json/cucumber-report.json"
+    }
+  }
+}
